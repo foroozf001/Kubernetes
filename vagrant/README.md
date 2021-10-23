@@ -17,24 +17,6 @@ Bringing machine 'k8s-worker-2' up with 'virtualbox' provider...
 2. SSH into the master node and check cluster availability.
 ```bash
 $ vagrant ssh k8s-master
-Welcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-80-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/advantage
-
-  System information as of Sat 23 Oct 2021 11:05:30 AM UTC
-
-  System load:  0.67              Users logged in:        0
-  Usage of /:   6.1% of 61.31GB   IPv4 address for eth0:  10.0.2.15
-  Memory usage: 44%               IPv4 address for eth1:  192.168.50.10
-  Swap usage:   0%                IPv4 address for tunl0: 172.16.235.192
-  Processes:    159
-
-
-This system is built by the Bento project by Chef Software
-More information can be found at https://github.com/chef/bento
-Last login: Sat Oct 23 10:57:35 2021 from 10.0.2.2
 
 vagrant@k8s-master:~$ kubectl cluster-info --context kubernetes-admin@kubernetes
 Kubernetes control plane is running at https://192.168.50.10:6443
