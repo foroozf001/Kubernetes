@@ -120,7 +120,7 @@ ingress-web   <none>   example.internal.vodafoneziggo.com   192.168.50.12   80  
 ```
 10. Exit k8s-master.
 ```bash
-exit
+vagrant@k8s-master:~$ exit
 ```
 11. Create custom DNS entry on localhost using Ingress' external IP.
 ```bash
