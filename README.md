@@ -1,3 +1,2 @@
-# kubernetes
-
-This repository contains scripts for provisioning local Kubernetes environments.
+# Kubernetes
+This repository contains scripts and instructions to provision local Kubernetes environments.
