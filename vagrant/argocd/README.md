@@ -69,14 +69,14 @@ vagrant@k8s-master:~$ kubectl get ingress -n argocd
 NAME             CLASS    HOSTS                               ADDRESS         PORTS   AGE
 ingress-argocd   <none>   argocd.internal.vodafoneziggo.com   192.168.50.12   80      15s
 ```
-9. Create custom DNS entry on localhost using Ingress' external IP.
-```bash
-$ sudo bash -c "echo '192.168.50.12 argocd.internal.vodafoneziggo.com' >> /etc/hosts"
-```
-10. Fetch ArgoCD initial admin credentials.
+9. Fetch ArgoCD initial admin credentials.
 ```bash
 vagrant@k8s-master:~$ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 fFcBJGPTjhqhSVwi
+```
+10. Create custom DNS entry on localhost using Ingress' external IP.
+```bash
+$ sudo bash -c "echo '192.168.50.12 argocd.internal.vodafoneziggo.com' >> /etc/hosts"
 ```
 11. Access ArgoCD via webbrowser http://argocd.internal.vodafoneziggo.com:30081. And log-in using admin credentials.
 ![argocd log-in screen 1](argocd_1.png "Log-in screen")
