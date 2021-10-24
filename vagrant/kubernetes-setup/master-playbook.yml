@@ -60,6 +60,15 @@
         - kubeadm=1.22.0-00
         - kubectl=1.22.0-00
 
+  - name: Install packages
+    apt: 
+      name: "{{ packages }}"
+      state: present
+      update_cache: yes
+    vars:
+      packages:
+        - make
+
   - name: Configure containerd
     blockinfile:
       create: true
