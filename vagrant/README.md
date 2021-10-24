@@ -72,7 +72,7 @@ vagrant@k8s-master:~$ exit
 logout
 Connection to 127.0.0.1 closed.
 ```
-7. Create custom DNS entry on localhost using Ingress' external IP. The IP address can be any of the nodes.
+7. Create custom DNS entry on localhost. The IP address can be any of the nodes.
 ```bash
 $ sudo bash -c "echo '192.168.50.10 example.internal.vodafoneziggo.com' >> /etc/hosts"
 ```
