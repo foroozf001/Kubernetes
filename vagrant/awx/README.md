@@ -10,29 +10,29 @@ Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 4.15.0-151-generic x86_64)
  * Management:     https://landscape.canonical.com
  * Support:        https://ubuntu.com/advantage
 
-  System information as of Sun Oct 24 18:32:47 UTC 2021
+  System information as of Mon Oct 25 13:58:48 UTC 2021
 
-  System load:  1.26              Users logged in:      0
-  Usage of /:   6.0% of 61.80GB   IP address for eth0:  10.0.2.15
+  System load:  0.33              Users logged in:      0
+  Usage of /:   6.2% of 61.80GB   IP address for eth0:  10.0.2.15
   Memory usage: 12%               IP address for eth1:  192.168.50.10
   Swap usage:   0%                IP address for tunl0: 172.16.235.192
-  Processes:    167
+  Processes:    163
 
 
 This system is built by the Bento project by Chef Software
 More information can be found at https://github.com/chef/bento
-Last login: Sun Oct 24 18:29:57 2021 from 10.0.2.2
+Last login: Mon Oct 25 13:53:35 2021 from 10.0.2.2
 ```
 2. Clone the AWX operator repository.
 ```bash
 vagrant@k8s-master:~$ git clone https://github.com/ansible/awx-operator.git
 Cloning into 'awx-operator'...
 remote: Enumerating objects: 5735, done.
-remote: Counting objects: 100% (2833/2833), done.
-remote: Compressing objects: 100% (1046/1046), done.
-remote: Total 5735 (delta 1908), reused 2436 (delta 1685), pack-reused 2902
-Receiving objects: 100% (5735/5735), 1.41 MiB | 4.21 MiB/s, done.
-Resolving deltas: 100% (3264/3264), done.
+remote: Counting objects: 100% (2949/2949), done.
+remote: Compressing objects: 100% (1098/1098), done.
+remote: Total 5735 (delta 1975), reused 2501 (delta 1749), pack-reused 2786
+Receiving objects: 100% (5735/5735), 1.41 MiB | 637.00 KiB/s, done.
+Resolving deltas: 100% (3256/3256), done.
 ```
 3. Move into AWX operator working directory.
 ```bash
@@ -86,20 +86,7 @@ NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
 awx-operator-controller-manager   0/1     1            0           34s
 awx-operator-controller-manager   1/1     1            1           60s
 ```
-8. Deploy AWX.
-```bash
-vagrant@k8s-master:~/awx-operator$ kubectl apply -f awx-demo.yml -n awx
-awx.awx.ansible.com/awx-demo created
-```
-9. Inspect AWX pods for readiness.
-```bash
-vagrant@k8s-master:~/awx-operator$ kubectl get po -n awx
-NAME                                               READY   STATUS              RESTARTS   AGE
-awx-demo-d46576-mwq8f                              0/4     ContainerCreating   0          22s
-awx-demo-postgres-0                                0/1     Pending             0          29s
-awx-operator-controller-manager-68d787cfbd-qn9gh   2/2     Running             0          2m35s
-```
-10. There is a possibility the Postgres pod will stay pending because there is no PersistentVolume to be claimed. In this case, create the following PersistentVolume and deploy it to ```awx``` namespace.
+8. There is a possibility the postgres pod will stay pending because there is no PersistentVolume to be claimed. In this case, create the following PersistentVolume and deploy it to ```awx``` namespace.
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -122,24 +109,31 @@ spec:
   storageClassName: standard
   volumeMode: Filesystem
 ```
+9. 
 ```bash
 vagrant@k8s-master:~/awx-operator$ kubectl apply -f pv.yaml 
 persistentvolume/pv-postgres-01 created
 ```
-11. Inspect the new PersistentVolume to be bound.
-```bash
-vagrant@k8s-master:~/awx-operator$ kubectl get pvc -n awx
-NAME                           STATUS   VOLUME           CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-postgres-awx-demo-postgres-0   Bound    pv-postgres-01   8Gi        RWO                           2m53s
+10. Edit ```awx-demo.yaml```.
+```yaml
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awx-demo
+spec:
+  service_type: LoadBalancer
+  loadbalancer_protocol: http
+  loadbalancer_port: 80
+  ingress_type: ingress
+  hostname: ansible.local.internal.vodafoneziggo.com
 ```
-12. Inspect the Postgres pod status to be ContainerCreating. It will take some time to be up and running.
+11. Deploy AWX.
 ```bash
-vagrant@k8s-master:~/awx-operator$ kubectl get po -n awx -w
-NAME                                               READY   STATUS              RESTARTS   AGE
-awx-demo-d46576-mwq8f                              4/4     Running             0          3m23s
-awx-demo-postgres-0                                0/1     ContainerCreating   0          3m30s
-awx-operator-controller-manager-68d787cfbd-qn9gh   2/2     Running             0          5m36s
+vagrant@k8s-master:~/awx-operator$ kubectl apply -f awx-demo.yml -n awx
+awx.awx.ansible.com/awx-demo created
 ```
+12. Inspect AWX pods for readiness.
 After some minutes.
 ```bash
 vagrant@k8s-master:~$ kubectl get po -n awx
@@ -148,28 +142,21 @@ awx-demo-d46576-mwq8f                              4/4     Running   0          
 awx-demo-postgres-0                                1/1     Running   0          8m40s
 awx-operator-controller-manager-68d787cfbd-qn9gh   2/2     Running   0          10m
 ```
-13. Patch the ```awx-demo-service``` to unique NodePort 30082. 
-```bash
-vagrant@k8s-master:~/awx-operator$ kubectl patch svc awx-demo-service -n awx -p '{"spec": {"ports": [{"name": "http", "port": 80, "nodePort": 30082}]}}'
-service/awx-demo-service patched
-```
-14. Fetch admin credentials.
+13. Fetch admin credentials.
 ```bash
 vagrant@k8s-master:~$ kubectl get secret awx-demo-admin-password -o jsonpath="{.data.password}" -n awx | base64 --decode
-PLxgtXkBLBATV0JIClgcnLyPXp0Qc0wr
+5RIWsVgIsqPCey0oaDSVaC3yVa90POkX
 ```
-15. Exit the master node.
+14. Exit the master node.
 ```bash
 vagrant@k8s-master:~/awx-operator$ exit
 logout
 Connection to 127.0.0.1 closed.
 ```
-16. Create custom DNS entry on localhost. The IP address can be any of the nodes.
+15. Create custom DNS entry on localhost. The IP address can be any of the nodes.
 ```bash
-$ sudo bash -c "echo '192.168.50.10 awx.internal.vodafoneziggo.com' >> /etc/hosts"
+$ sudo bash -c "echo '192.168.50.10 ansible.local.vodafoneziggo.com' >> /etc/hosts"
 [sudo] password for fforoozan:
 ```
-17. Access the AWX web server using the custom domain name and exposed port.
-![awx](awx.png)
-18. Log-in using the admin credentials.
-![awx2](awx2.png)
+17. Access the AWX web server using the custom domain name and log-in using admin credentials.
+![awx](awx.png))
