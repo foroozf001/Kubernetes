@@ -109,7 +109,7 @@ spec:
   storageClassName: standard
   volumeMode: Filesystem
 ```
-9. 
+9. Deploy PersistentVolume.
 ```bash
 vagrant@k8s-master:~/awx-operator$ kubectl apply -f pv.yaml 
 persistentvolume/pv-postgres-01 created
