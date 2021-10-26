@@ -86,7 +86,7 @@ NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
 awx-operator-controller-manager   0/1     1            0           34s
 awx-operator-controller-manager   1/1     1            1           60s
 ```
-8. There is a possibility the postgres pod will stay pending because there is no PersistentVolume to be claimed. In this case, create the following PersistentVolume and deploy it to ```awx``` namespace.
+8. There is a possibility the internal postgres pod will stay pending because there is no PersistentVolume to be claimed. In this case, create the following PersistentVolume and deploy it to ```awx``` namespace.
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -122,11 +122,11 @@ kind: AWX
 metadata:
   name: awx-demo
 spec:
-  service_type: LoadBalancer
-  loadbalancer_protocol: http
-  loadbalancer_port: 80
+  service_type: ClusterIP
   ingress_type: ingress
-  hostname: ansible.local.internal.vodafoneziggo.com
+  ingress_annotations: |
+    kubernetes.io/ingress.class: "nginx"
+  hostname: ansible.local.vodafoneziggo.com
 ```
 11. Deploy AWX.
 ```bash
@@ -155,7 +155,7 @@ Connection to 127.0.0.1 closed.
 ```
 15. Create custom DNS entry on localhost. The IP address can be any of the nodes.
 ```bash
-$ sudo bash -c "echo '192.168.50.10 ansible.local.vodafoneziggo.com' >> /etc/hosts"
+$ sudo bash -c "echo '192.168.50.240 ansible.local.vodafoneziggo.com' >> /etc/hosts"
 [sudo] password for fforoozan:
 ```
 17. Access the AWX web server using the custom domain name and log-in using admin credentials.
