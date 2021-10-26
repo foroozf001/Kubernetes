@@ -153,9 +153,22 @@
     become: false
     command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/namespace.yaml
 
-  - name: Deploy metallb configmap file
-    become: false
-    command: kubectl apply -f /home/vagrant/cm-metallb.yml
+  - name: Deploy metallb configmap
+    copy:
+      dest: /home/vagrant/cm.yaml
+      content: |
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          namespace: metallb-system
+          name: config
+        data:
+          config: |
+            address-pools:
+            - name: default
+              protocol: layer2
+              addresses:
+              - 192.168.50.240-192.168.50.254
 
   - name: Deploy metallb manifests
     become: false
