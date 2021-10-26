@@ -79,14 +79,14 @@ configmap/awx-operator-manager-config created
 service/awx-operator-controller-manager-metrics-service created
 deployment.apps/awx-operator-controller-manager created
 ```
-7. Inspect ```awx-operator-controller-manager``` for readiness.
+7. Inspect awx-operator-controller-manager for readiness.
 ```bash
 vagrant@k8s-master:~/awx-operator$ kubectl get deploy -n awx -w
 NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
 awx-operator-controller-manager   0/1     1            0           34s
 awx-operator-controller-manager   1/1     1            1           60s
 ```
-8. There is a possibility the internal postgres pod will stay pending because there is no PersistentVolume to be claimed. In this case, create the following PersistentVolume and deploy it to ```awx``` namespace.
+8. There is a possibility the internal postgres ```pod``` will stay pending because there is no ```PersistentVolume``` to be claimed. In this case, create the following ```PersistentVolume``` and deploy it to awx ```namespace```.
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -109,7 +109,7 @@ spec:
   storageClassName: standard
   volumeMode: Filesystem
 ```
-9. Deploy PersistentVolume.
+9. Deploy ```PersistentVolume```.
 ```bash
 vagrant@k8s-master:~/awx-operator$ kubectl apply -f pv.yaml 
 persistentvolume/pv-postgres-01 created
@@ -153,10 +153,10 @@ vagrant@k8s-master:~/awx-operator$ exit
 logout
 Connection to 127.0.0.1 closed.
 ```
-15. Create custom DNS entry on localhost. The IP address can be any of the nodes.
+15. Create custom DNS entry on localhost. The IP address is that of the Nginx ingress controller.
 ```bash
 $ sudo bash -c "echo '192.168.50.240 ansible.local.vodafoneziggo.com' >> /etc/hosts"
 [sudo] password for fforoozan:
 ```
-17. Access the AWX web server using the custom domain name and log-in using admin credentials.
+16. Access the AWX web server using the custom domain name and log-in using admin credentials.
 ![awx](awx.png))
