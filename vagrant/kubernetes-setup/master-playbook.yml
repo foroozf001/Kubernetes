@@ -148,37 +148,44 @@
     become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
 
-  # https://metallb.universe.tf/installation/
-  - name: Creating metallb configmap file
-    copy:
-      dest: /home/vagrant/cm.yaml
-      content: |
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          namespace: metallb-system
-          name: config
-        data:
-          config: |
-            address-pools:
-            - name: default
-              protocol: layer2
-              addresses:
-              - 192.168.50.244-192.168.50.254
-
   - name: Deploy metallb namespace
     become: false
     command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/namespace.yaml
 
-  - name: Deploy metallb namespace
+  - name: Deploy metallb configmap file
     become: false
-    command: kubectl apply -f /home/vagrant/cm.yaml
+    command: kubectl apply -f /home/vagrant/cm-metallb.yml
 
   - name: Deploy metallb manifests
     become: false
     command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/metallb.yaml
 
-  # https://kubernetes.github.io/ingress-nginx/deploy/#bare-metal
-  - name: Deploy Nginx Ingress manifests
+  # https://helm.sh/docs/intro/install/#from-script
+  - name: Download Helm 
     become: false
-    command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/baremetal/deploy.yaml
+    command: curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  
+  - name: Set Helm script permissions 
+    become: false
+    command: chmod 700 get_helm.sh
+
+  - name: Execute Helm script 
+    become: false 
+    command: ./get_helm.sh
+
+  # https://kubernetes.github.io/ingress-nginx/deploy/#using-helm
+  - name: Create ingress namespace
+    become: false
+    command: kubectl create ns ingress-nginx
+
+  - name: Add ingress repo
+    become: false
+    command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+  
+  - name: Update ingress repo
+    become: false
+    command: helm repo update
+
+  - name: Deploy Ingress Nginx
+    become: false
+    command: helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --values /home/vagrant/ingress-nginx.yml
