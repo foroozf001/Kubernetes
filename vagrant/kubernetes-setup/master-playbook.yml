@@ -161,31 +161,31 @@
     command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/metallb.yaml
 
   # https://helm.sh/docs/intro/install/#from-script
-  - name: Download Helm 
+  - name: Download Helm installation script
     become: false
     command: curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
   
-  - name: Set Helm script permissions 
+  - name: Set Helm installation script permissions 
     become: false
     command: chmod 700 get_helm.sh
 
-  - name: Execute Helm script 
+  - name: Execute Helm installation script 
     become: false 
     command: ./get_helm.sh
 
   # https://kubernetes.github.io/ingress-nginx/deploy/#using-helm
-  - name: Create ingress namespace
+  - name: Create Nginx Ingress namespace
     become: false
     command: kubectl create ns ingress-nginx
 
-  - name: Add ingress repo
+  - name: Add Nginx Ingress Helm repo
     become: false
     command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
   
-  - name: Update ingress repo
+  - name: Update Nginx Ingress Helm repo
     become: false
     command: helm repo update
 
-  - name: Deploy Ingress Nginx
-    become: false
-    command: helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --values /home/vagrant/ingress-nginx.yml
+  # - name: Deploy Ingress Nginx
+  #   become: false
+  #   command: helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --values /home/vagrant/ingress-nginx.yml
