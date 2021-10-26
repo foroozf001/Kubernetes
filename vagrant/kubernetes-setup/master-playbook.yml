@@ -148,6 +148,7 @@
     become: false
     local_action: copy content="{{ join_command.stdout_lines[0] }}" dest="./join-command"
 
+  # https://metallb.universe.tf/installation/
   - name: Deploy metallb namespace
     become: false
     command: kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.10.3/manifests/namespace.yaml
@@ -173,19 +174,7 @@
     become: false 
     command: ./get_helm.sh
 
-  # https://kubernetes.github.io/ingress-nginx/deploy/#using-helm
-  - name: Create Nginx Ingress namespace
+  # https://kubernetes.github.io/ingress-nginx/deploy/#bare-metal
+  - name: Deploy Ingress Nginx controller
     become: false
-    command: kubectl create ns ingress-nginx
-
-  - name: Add Nginx Ingress Helm repo
-    become: false
-    command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-  
-  - name: Update Nginx Ingress Helm repo
-    become: false
-    command: helm repo update
-
-  # - name: Deploy Ingress Nginx
-  #   become: false
-  #   command: helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --values /home/vagrant/ingress-nginx.yml
+    command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/baremetal/deploy.yaml
