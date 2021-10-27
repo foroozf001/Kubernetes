@@ -25,6 +25,7 @@ Vagrant.configure("2") do |config|
             master.vm.network "private_network", ip: "#{IP_BASE}#{i + 10}"
             master.vm.hostname = "k8s-m-#{i}"
             master.vm.provider "virtualbox" do |v|
+                v.name = "k8s-m-#{i}"
                 v.memory = MASTERS_MEM
                 v.cpus = MASTERS_CPU
             end            
@@ -49,6 +50,7 @@ Vagrant.configure("2") do |config|
             node.vm.network "private_network", ip: "#{IP_BASE}#{j + 10 + MASTERS_NUM}"
             node.vm.hostname = "k8s-n-#{j}"
             node.vm.provider "virtualbox" do |v|
+                v.name = "k8s-n-#{j}"
                 v.memory = NODES_MEM
                 v.cpus = NODES_CPU
                 #v.customize ["modifyvm", :id, "--cpuexecutioncap", "20"]
