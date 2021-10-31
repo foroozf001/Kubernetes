@@ -76,12 +76,12 @@ awx-operator-controller-manager-68d787cfbd-q6shf   2/2     Running   0          
 ```
 10. Fetch admin credentials.
 ```bash
-vagrant@k8s-m-1:~/awx-operator$ kubectl get secret awx-demo-admin-password -o jsonpath="{.data.password}" -n awx | base64 --decode
+vagrant@k8s-m-1:~/awx-operator$ kubectl get secret awx-demo-admin-password -o jsonpath="{.data.password}" -n awx | base64 --decode; echo
 I3UHCkULobfnZQNpqAgiF19xQIAxq1TN
 ```
 11. Fetch IP of Nginx Ingress controller Loadbalancer.
 ```bash
-$ kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+$ kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'; echo
 172.18.255.200
 ```
 12. Create custom DNS entry on localhost. The IP address is that of the Nginx ingress controller.
