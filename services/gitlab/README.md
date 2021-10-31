@@ -1,19 +1,19 @@
 # GITLAB
 This document describes how to provision GitLab on a Kind Kubernetes cluster following the [official documentation](https://docs.gitlab.com/charts/installation/deployment.html).
 ## Prerequisites
-* Helm 3
+* [Helm 3](https://helm.sh/docs/intro/install/)
 ## Step-by-step
 1. Create GitLab ```namespace```.
 ```bash
 $ kubectl create ns gitlab
 namespace/gitlab created
 ```
-2. Install GitLab Helm chart.
+2. Add GitLab Helm chart repository.
 ```bash
 $ helm repo add gitlab https://charts.gitlab.io/
 $ helm repo update
 ```
-3. Deploy GitLab.
+3. Install GitLab Helm chart.
 ```bash
 helm install gitlab gitlab/gitlab \
   --timeout 600s \
@@ -23,7 +23,7 @@ helm install gitlab gitlab/gitlab \
   --set gitlab-runner.install=false \
   --namespace=gitlab
 ```
-4. Inspect GitLab pods for readiness. This takes at least 10 minutes.
+4. Inspect GitLab pods for readiness. This takes 10 minutes, give or take.
 ```bash
 $ k get po -n gitlab -w
 NAME                                                    READY   STATUS             RESTARTS   AGE
@@ -47,19 +47,19 @@ gitlab-task-runner-57f78fd8f7-hccfl                     1/1     Running         
 gitlab-webservice-default-7f446dfc4c-26mp8              2/2     Running            0          11m
 gitlab-webservice-default-7f446dfc4c-msnwv              2/2     Running            0          11m
 ```
-5. Fetch admin credentials.
+5. Fetch ```root``` credentials.
 ```bash
-$ kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' -n gitlab | base64 --decode ; echo
+$ kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' -n gitlab | base64 --decode; echo
 1hqf55X2VvoSRmTQo5YEboyIXIZCnUNWFaC5WYL954axAuoxU3iK3gCOSiKtsdeP
 ```
-6. Fetch IP of Nginx Ingress controller Loadbalancer.
+6. Fetch IP of ```Nginx Ingress Controller``` service.
 ```bash
 $ kubectl get svc gitlab-nginx-ingress-controller -n gitlab -o jsonpath='{.status.loadBalancer.ingress[0].ip}'; echo
 172.18.255.201
 ```
-7. Create custom DNS entry on localhost. The IP address is that of the Nginx ingress controller.
+7. Create custom DNS entry. The IP address is that of the ```Nginx Ingress Controller```.
 ```bash
 $ sudo bash -c "echo '172.18.255.201 gitlab.local.vodafoneziggo.com' >> /etc/hosts"
 ```
-8. Access the GitLab web server using the custom domain name and log-in using ```root``` credentials.
+8. Access the GitLab web server using the custom domain name and log in using ```root``` credentials.
 ![gitlab](img/gitlab.png)

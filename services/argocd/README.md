@@ -10,22 +10,22 @@ namespace/argocd created
 ```bash
 $ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
-3. Deploy ```services/argocd/argocd-ingress.yaml```. Read more in the [official documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-multiple-ingress-objects-and-hosts).
+3. Deploy ```services/argocd/argocd-ingress.yaml```. Read more about Ingress settings in the [official documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-2-multiple-ingress-objects-and-hosts).
 ```yaml
 $ kubectl apply -f services/argocd/argocd-ingress.yaml
 ingress.networking.k8s.io/argocd-server-http-ingress created
 ingress.networking.k8s.io/argocd-server-grpc-ingress created
 ```
-4. Edit argocd-server ```deployment```. Add ```--insecure``` flag to the commands.
+4. Edit ```argocd-server``` deployment. Add ```--insecure``` flag to the commands.
 ```bash
 $ kubectl edit deploy argocd-server -n argocd
 ```
-Find the following section and make the desired changes.
+Find the following section and make the change.
 ```yaml
 containers:
 - command:
   - argocd-server
-  - --insecure
+  - --insecure # add this line
 ```
 5. Inspect ArgoCD pods for readiness.
 ```bash
@@ -37,19 +37,19 @@ argocd-redis-5b6967fdfc-xhppl        1/1     Running   0          7m16s
 argocd-repo-server-98598b6c7-2vf46   1/1     Running   0          7m16s
 argocd-server-678d7f7474-jvwfk       1/1     Running   0          41s
 ```
-6. Fetch admin credentials.
+6. Fetch ```admin``` credentials.
 ```bash
 $ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
 aydW28HdEcu4HEch
 ```
-7. Fetch IP of Nginx Ingress controller Loadbalancer.
+7. Fetch IP of ```Nginx Ingress Controller``` service.
 ```bash
 $ kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'; echo
 172.18.255.200
 ```
-8. Create custom DNS entry on localhost. The IP address is that of the Nginx ingress controller.
+8. Create custom DNS entry. The IP address is that of the ```Nginx Ingress Controller```.
 ```bash
 $ sudo bash -c "echo '172.18.255.200 argocd.local.vodafoneziggo.com' >> /etc/hosts"
 ```
-9. Access the ArgoCD web server using the custom domain name and log-in using admin credentials.
+9. Access the ArgoCD web server using the custom domain name and log in using ```admin``` credentials.
 ![argocd](img/argocd.png)

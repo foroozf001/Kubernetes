@@ -1,5 +1,5 @@
 # AWX
-This document describes how to provision AWX on a Kind Kubernetes cluster using the AWX operator.
+This document describes how to provision AWX on a Kind Kubernetes cluster using the [AWX operator](https://github.com/ansible/awx-operator).
 ## Step-by-step
 1. Clone the AWX operator repository.
 ```bash
@@ -34,11 +34,11 @@ $ git tag -l
 $ git checkout tags/0.14.0 -b tags/0.14.0
 Switched to a new branch 'tags/0.14.0'
 ```
-5. Run AWX operator make-file.
+5. Run AWX operator Makefile.
 ```bash
 $ make deploy
 ```
-6. Inspect awx-operator-controller-manager for readiness.
+6. Inspect AWX deployment for readiness.
 ```bash
 $ kubectl get deploy -n awx -w
 NAME                              READY   UP-TO-DATE   AVAILABLE   AGE
@@ -74,19 +74,19 @@ awx-demo-d46576-7g9gd                              4/4     Running   0          
 awx-demo-postgres-0                                1/1     Running   0          4m11s
 awx-operator-controller-manager-68d787cfbd-q6shf   2/2     Running   0          7m8s                           4/4     Running             0          2m35s
 ```
-10. Fetch admin credentials.
+10. Fetch ```admin``` credentials.
 ```bash
 vagrant@k8s-m-1:~/awx-operator$ kubectl get secret awx-demo-admin-password -o jsonpath="{.data.password}" -n awx | base64 --decode; echo
 I3UHCkULobfnZQNpqAgiF19xQIAxq1TN
 ```
-11. Fetch IP of Nginx Ingress controller Loadbalancer.
+11. Fetch IP of ```Nginx Ingress Controller``` service.
 ```bash
 $ kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'; echo
 172.18.255.200
 ```
-12. Create custom DNS entry on localhost. The IP address is that of the Nginx ingress controller.
+12. Create custom DNS entry. The IP address is that of the ```Nginx Ingress Controller```.
 ```bash
 $ sudo bash -c "echo '172.18.255.200 ansible.local.vodafoneziggo.com' >> /etc/hosts"
 ```
-13. Access the AWX web server using the custom domain name and log-in using admin credentials.
+13. Access the AWX web server using the custom domain name and log in using ```admin``` credentials.
 ![awx](img/awx.png))
