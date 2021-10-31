@@ -1,5 +1,5 @@
 # AWX
-This document describes how to provision AWX on a Vagrant Kubernetes cluster using the AWX operator.
+This document describes how to provision AWX on a Kind Kubernetes cluster using the AWX operator.
 ## Step-by-step
 1. Clone the AWX operator repository.
 ```bash
