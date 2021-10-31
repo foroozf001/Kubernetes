@@ -85,6 +85,10 @@
   become: false
   command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.4/deploy/static/provider/baremetal/deploy.yaml
 
+- name: Change Ingress Nginx controller service type
+  become: false
+  command: kubectl patch svc ingress-nginx-controller --namespace=ingress-nginx --type=json -p '[{"op":"replace","path":"/spec/type","value":"LoadBalancer"}]'
+
 # Install Helm
 # https://helm.sh/docs/intro/install/#from-script
 - name: Download Helm installation script

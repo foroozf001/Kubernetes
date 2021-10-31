@@ -46,14 +46,3 @@ k8s-m-1   Ready    control-plane,master   5m44s   v1.22.2
 k8s-n-1   Ready    <none>                 3m9s    v1.22.2
 k8s-n-2   Ready    <none>                 44s     v1.22.2
 ```
-4. Edit the Nginx Ingress controller service type since the official manifests deploy type ```NodePort``` by default. Only change the value from ```NodePort``` to ```LoadBalancer```.
-```bash
-vagrant@k8s-m-1:~$ kubectl edit svc ingress-nginx-controller -n ingress-nginx
-service/ingress-nginx-controller edited
-```
-5. Inspect Nginx Ingress controller service to have an external IP.
-```bash
-vagrant@k8s-m-1:~$ kubectl get svc ingress-nginx-controller -n ingress-nginx
-NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)                      AGE
-ingress-nginx-controller   LoadBalancer   10.108.12.140   192.168.50.240   80:31168/TCP,443:30907/TCP   6m23s
-```
