@@ -8,10 +8,10 @@ Kind allows provisioning multi-node clusters on Docker containers. The advantage
 ## Step-by-step
 1. The Kind cluster runs on a custom Docker network: ```kind```. We require the Kind CIDR in order to allocate a narrow range of IPs to ```Metallb```. ```Metallb``` is a layer 7 load balancing solution for bare-metal Kubernetes clusters. Inspect the Kind network to determine the CIDR range.
 ```bash
-$ docker network inspect -f '{{.IPAM.Config}}' kind
-[{172.18.0.0/16  172.18.0.1 map[]} {fc00:f853:ccd:e793::/64  fc00:f853:ccd:e793::1 map[]}]
+$ docker network inspect -f '{{range .IPAM.Config}}{{.Subnet}}{{"\n"}}{{end}}' kind | head -n1
+172.18.0.0/16
 ```
-2. From the CIDR range we pick a sensible IP-range for ```Metallb``` to use (..255.200-..255.250). These IPs will be dynamically allocated to Kubernetes ```LoadBalancer``` services. Update ```setup/metallb.cm.yaml``` according to the chosen IP range.
+2. From the CIDR range we pick a sensible IP-range for ```Metallb``` to use (172.18.255.200-172.18.255.250). These IPs will be dynamically allocated to Kubernetes ```LoadBalancer``` services. Update ```setup/metallb.cm.yaml``` according to the chosen IP range.
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -24,7 +24,7 @@ data:
     - name: default
       protocol: layer2
       addresses:
-      - 172.18.255.200-172.18.255.250 
+      - 172.18.255.200-172.18.255.250
 ```
 3. Spinning up the Kind cluster is as simple as running the Makefile.
 ```bash
