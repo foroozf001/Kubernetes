@@ -89,4 +89,6 @@ $ kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.statu
 $ sudo bash -c "echo '172.18.255.200 ansible.local.vodafoneziggo.com' >> /etc/hosts"
 ```
 13. Access the AWX web server using the custom domain name and log in using ```admin``` credentials.
-![awx](img/awx.png))
+![awx](img/awx.png)
+14. HTTP 502 Bad Gateway means AWX is still installing. Give it a couple minutes.
+![awx2](img/awx2.png)
