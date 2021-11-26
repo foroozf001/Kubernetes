@@ -30,7 +30,7 @@ awx: cluster
 	TODO: wait for awx operator to exist before proceeding
 	retries=2
 	until [[ "$${retries}" == 0 ]];do
-		echo "[info] retry..."
+		echo "[info] waiting..."
 		sleep 30
 		retries=$$((retries - 1))
 	done
@@ -51,7 +51,7 @@ gitlab: cluster
 	# TODO: wait for validate webhook to exist before proceeding
 	retries=2
 	until [[ "$${retries}" == 0 ]];do
-		echo "[info] retry..."
+		echo "[info] waiting..."
 		sleep 30
 		retries=$$((retries - 1))
 	done
@@ -60,7 +60,7 @@ gitlab: cluster
 	# TODO: wait for gitlab operator to exist before proceeding
 	retries=2
 	until [[ "$${retries}" == 0 ]];do
-		echo "[info] retry..."
+		echo "[info] waiting..."
 		sleep 30
 		retries=$$((retries - 1))
 	done
@@ -74,18 +74,18 @@ gitlab: cluster
 			echo "[info] ready!"
 			break
 		else
-			echo "[info] timeout $${retries}..."
+			echo "[info] $$retries - waiting..."
 		fi
 		sleep 30
 		retries=$$((retries - 1))
 	done
 	LB_IP=$$(kubectl get svc gitlab-nginx-ingress-controller -n gitlab-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 	if [[ -z $$(grep "$$LB_IP gitlab.local.vodafoneziggo.com" "/etc/hosts") ]];then 
-		echo "[info] add DNS: $LB_IP gitlab.local.vodafoneziggo.com"
+		echo "[info] add DNS: $$LB_IP gitlab.local.vodafoneziggo.com"
 		sudo bash -c "echo '"$${LB_IP}" gitlab.local.vodafoneziggo.com' >> /etc/hosts"
 	fi
 	if [[ -z $$(grep "$$LB_IP minio.local.vodafoneziggo.com" "/etc/hosts") ]];then 
-		echo "[info] add DNS: $LB_IP minio.local.vodafoneziggo.com"
+		echo "[info] add DNS: $$LB_IP minio.local.vodafoneziggo.com"
 		sudo bash -c "echo '"$${LB_IP}" minio.local.vodafoneziggo.com' >> /etc/hosts"
 	fi
 	if [[ -z $$(grep "$$LB_IP registry.local.vodafoneziggo.com" "/etc/hosts") ]];then 
