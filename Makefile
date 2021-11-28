@@ -118,7 +118,6 @@ wordpress: cluster
 	kubectl apply -f services/wordpress/wordpress.yaml
 	helm install wp001 bitnami/wordpress -f services/wordpress/values.yaml -n wp001
 	kubectl rollout status deploy wp001-wordpress -n wp001
-	wordpressPassword=$$(kubectl get secret wp001-wordpress -n wp001 -o jsonpath='{.data.wordpress-password}' | base64 --decode)
 	helm upgrade wp001 bitnami/wordpress -f services/wordpress/values.yaml -n wp001 --set wordpressPassword=password --set ingress.tls=true
 	LB_IP=$$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 	if [[ -z $$(grep "$$LB_IP my.wordpress.com" "/etc/hosts") ]];then 
