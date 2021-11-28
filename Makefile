@@ -96,7 +96,6 @@ gitlab: cluster
 	kubectl -n gitlab-system get secret gitlab-gitlab-initial-root-password -ojsonpath='{.data.password}' | base64 --decode; echo
 	
 dashboard: cluster
-	kubectl rollout status deploy/ingress-nginx-controller -n ingress-nginx
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml
 	kubectl rollout status deploy/kubernetes-dashboard -n kubernetes-dashboard
 	kubectl apply -f services/kubernetes-dashboard/ingress.dashboard.yaml
@@ -111,6 +110,20 @@ dashboard: cluster
 	if [[ -z $$(grep "$$LB_IP dashboard.local.vodafoneziggo.com" "/etc/hosts") ]];then 
 		echo "[info] add DNS: $$LB_IP dashboard.local.vodafoneziggo.com"
 		sudo bash -c "echo '"$${LB_IP}" dashboard.local.vodafoneziggo.com' >> /etc/hosts"
+	fi
+
+wordpress: cluster
+	helm repo add bitnami https://charts.bitnami.com/bitnami
+	helm repo update
+	kubectl apply -f services/wordpress/wordpress.yaml
+	helm install wp001 bitnami/wordpress -f services/wordpress/values.yaml -n wp001
+	kubectl rollout status deploy wp001-wordpress -n wp001
+	wordpressPassword=$$(kubectl get secret wp001-wordpress -n wp001 -o jsonpath='{.data.wordpress-password}' | base64 --decode)
+	helm upgrade wp001 bitnami/wordpress -f services/wordpress/values.yaml -n wp001 --set wordpressPassword=password --set ingress.tls=true
+	LB_IP=$$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+	if [[ -z $$(grep "$$LB_IP my.wordpress.com" "/etc/hosts") ]];then 
+		echo "[info] add DNS: $$LB_IP my.wordpress.com"
+		sudo bash -c "echo '"$${LB_IP}" my.wordpress.com' >> /etc/hosts"
 	fi
 
 clean:
