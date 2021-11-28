@@ -1,0 +1,12 @@
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awx-demo
+  namespace: awx
+spec:
+  service_type: ClusterIP
+  ingress_type: ingress
+  ingress_annotations: |
+    kubernetes.io/ingress.class: "nginx"
+  hostname: ansible.local.vodafoneziggo.com

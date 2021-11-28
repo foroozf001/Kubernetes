@@ -1,3 +1,4 @@
+**/awx-operator
 .vagrant/
 .private/
 *-join-command
