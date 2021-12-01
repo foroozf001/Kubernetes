@@ -27,7 +27,7 @@ awx: cluster
 	make deploy
 	kubectl rollout status deploy/awx-operator-controller-manager -n awx
 	kubectl apply -f awx.yaml
-	TODO: wait for awx operator to exist before proceeding
+	# TODO: wait for awx operator to exist before proceeding
 	retries=2
 	until [[ "$${retries}" == 0 ]];do
 		echo "[info] waiting..."
